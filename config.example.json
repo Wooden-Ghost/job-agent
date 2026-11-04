@@ -1,0 +1,34 @@
+{
+  "adbPath": "",
+  "serial": "",
+  "tabs": [],
+  "defaultCity": "成都",
+  "screensPerTab": 3,
+  "perTabJobs": [
+    10,
+    10,
+    10
+  ],
+  "maxJobsPerRun": 60,
+  "maxJobsPerDay": 120,
+  "maxRunMinutes": 60,
+  "pauseEvery": 6,
+  "shuffleTabs": false,
+  "skipViewed": true,
+  "dbPath": "",
+  "logDir": "",
+  "exportDir": "",
+  "autoExport": true,
+  "schedule": {
+    "enabled": false,
+    "times": [
+      "09:00"
+    ]
+  },
+  "speed": "normal",
+  "waitRange": [
+    1,
+    4
+  ],
+  "expectedSalaryMin": 8000
+}

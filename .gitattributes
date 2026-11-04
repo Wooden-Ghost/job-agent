@@ -1,0 +1,15 @@
+# 统一换行符，避免跨平台 diff 爆炸
+* text=auto
+
+*.py    text eol=lf
+*.md    text eol=lf
+*.json  text eol=lf
+*.yml   text eol=lf
+*.sql   text eol=lf
+*.cmd   text eol=crlf
+*.bat   text eol=crlf
+
+*.png   binary
+*.ico   binary
+*.db    binary
+*.xlsx  binary

@@ -1,0 +1,44 @@
+# ---- 真实数据：永不入库 ----
+data/
+exports/
+logs/
+异常记录/
+config.json
+*.db
+!tests/fixtures/legacy_sample.db
+
+# ---- 含真实公司名/薪资/JD 的截图（展示图在 docs/preview/）----
+docs/shots/
+
+# ---- 打包/构建产物 ----
+build/
+dist/
+*.spec
+JobAgent.spec
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ---- 导出与临时文件 ----
+*.xlsx
+*.csv
+~$*
+_chk.py
+_smoke.py
+*.lnk
+
+# ---- 本地工具 / 编辑器 / 系统 ----
+.tmp/
+.dsh/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---- 开发过程文档（不上传，属于打磨细节）----
+docs/数据库窗口环境.md
+docs/数据库窗口方案-*.md
+docs/数据库窗口-实施报告.md
