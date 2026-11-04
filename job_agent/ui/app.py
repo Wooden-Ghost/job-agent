@@ -8,12 +8,14 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import sys
 import threading
 import time
 import traceback
 
-from PySide6.QtCore import Qt, QTimer, Signal
+from PySide6.QtCore import QLockFile, Qt, QTimer, Signal
 from PySide6.QtGui import QFont
 from PySide6.QtWidgets import (
     QApplication,
@@ -30,7 +32,7 @@ from PySide6.QtWidgets import (
 
 from .. import cli, detect, flow, store
 from . import theme as T
-from .db_window import DbWindow
+from .db_table import DbTableWindow
 from .pages import AboutPage, DataPage, EnvPage, HomePage, SettingsPage, TutorialPage
 from .widgets import Mark, Pill, label, toast
 
@@ -123,7 +125,7 @@ class MainWindow(QMainWindow):
         self.data = DataPage(self)
         self.tutorial = TutorialPage(self)
         self.about = AboutPage(self)
-        self.db_win: DbWindow | None = None
+        self.db_win: DbTableWindow | None = None
 
         self.stack = QStackedWidget()
         # 注意：DataPage 不再挂进 stack（入口改成独立窗口），但对象保留，
@@ -179,12 +181,11 @@ class MainWindow(QMainWindow):
     def open_db(self) -> None:
         """非模态独立窗口；关掉不影响采集。窗口引用必须留着，否则被 GC 回收。"""
         if self.db_win is None:
-            self.db_win = DbWindow(self.conn, self.cfg)
+            self.db_win = DbTableWindow(self.conn, Path(self.cfg["dbPath"]))
         self.db_win.show()
         self.db_win.raise_()
         self.db_win.activateWindow()
-        if hasattr(self.db_win.body, "reload"):
-            self.db_win.body.reload()
+        self.db_win.reload()
 
     # ------------------------------------------------------------ 环境
     def redetect(self, who: str = "全部", quiet: bool = False) -> None:
@@ -533,9 +534,20 @@ def main(cfg: dict | None = None) -> int:
     app.setApplicationName(APP_NAME)
     app.setFont(QFont(T.FONT, 10))
     app.setStyleSheet(T.QSS)
+
+    # 单实例：两个窗口同时写一个 sqlite 会互相踩，直接拦掉
+    lock = QLockFile(str(Path(cfg["dbPath"]).with_suffix(".lock")))
+    if not lock.tryLock(100):
+        return 0          # 已经在跑了，安静退出；弹窗反而会留一个看不见的进程
+
     win = MainWindow(cfg)
+    scr = app.primaryScreen().availableGeometry()
+    win.resize(min(win.width(), scr.width() - 80), min(win.height(), scr.height() - 80))
+    win.move(scr.center() - win.rect().center())     # 别让窗口跑到屏幕外面去
     win.show()
-    return app.exec()
+    rc = app.exec()
+    lock.unlock()
+    return rc
 
 
 if __name__ == "__main__":
