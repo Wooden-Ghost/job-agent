@@ -42,14 +42,15 @@ def main() -> int:
     out = ROOT / "docs" / "preview"
     out.mkdir(parents=True, exist_ok=True)
 
-    # 先展开一行再截第一张，读者一眼能看懂这个界面的交互方式
-    win.on_click(win.proxy.index(2, 0))
-    for _ in range(15):
+    # 第一张：干净列表
+    win.collapse()
+    for _ in range(10):
         app.processEvents()
     win.grab().save(str(out / "ui-table.png"))
 
-    win.on_click(win.proxy.index(0, 0))
-    for _ in range(15):
+    # 第二张：展开一行，看 JD 与三个记录框
+    win.on_click(win.proxy.index(2, 0))
+    for _ in range(20):
         app.processEvents()
     win.grab().save(str(out / "ui-drawer.png"))
 
